@@ -132,8 +132,6 @@ def dataset_dashboard():
 
 	print(query_obj)
 
-
-
 	# result = db.session['filename'].find(query_obj)
 
 	# print(list(result))
@@ -145,7 +143,7 @@ def dataset_dashboard():
 
 	if chartButtonForm.validate_on_submit():
 		return render_template('chart_query.html')
-	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm)
+	return render_template('dataset-analyzer.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm)
 
 
 if __name__=='__main__':
