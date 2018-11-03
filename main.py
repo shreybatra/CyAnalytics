@@ -94,7 +94,7 @@ def dashboard():
 
 			flash('Uploaded successfully with {} documents'.format(docs))
 			session['filename'] = filename
-			return redirect('/dashboard')
+			return redirect('/dataset/dashboard')
 
 	return render_template('upload_load.html', title='Dashboard', heading='CyAnalytics', form=form, logged_in=True)
 
@@ -121,9 +121,25 @@ def dataset_dashboard():
 
 	print(ans['col_info'])
 
+	query_obj = []# [{item['key']: None} for item in ans['col_info']]
+
+	for item in ans['col_info']:
+		count = len(list(db.session['filename'].find({item['key']: None})))
+		obj ={}
+		obj['key'] = item['key']
+		obj['count'] = count
+		query_obj.append(obj)
+
+	print(query_obj)
+
+
+
+	# result = db.session['filename'].find(query_obj)
+
+	# print(list(result))
 	selectform = SelectForm()
 
-	return render_template('dataset_dashboard.html', cols = ans['col_info'], select=selectform)
+	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform)
 
 
 if __name__=='__main__':

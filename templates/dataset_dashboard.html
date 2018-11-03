@@ -10,6 +10,15 @@
         </ul>
     </div>
 
+    <h2>Missing Values - </h2>
+    <div>
+        <ul>
+            {% for item in missing %}
+            <li>{{item.key}}   -    {{item.count}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <form action="" method="post" novalidate>
         {{ select.hidden_tag() }}
         <p>{{ select.submit() }}</p>
