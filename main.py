@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, flash,redirect
+from flask import Flask, render_template, request, flash,redirect, session
 from config import Config
 
-from forms import LoginForm, UploadForm
+from forms import LoginForm, UploadForm, SelectForm
 
 from pymongo import MongoClient
 import pandas as pd
+
+from bson.code import Code
 
 client = MongoClient()
 db = client.cyanalytics
@@ -75,22 +77,53 @@ def dashboard():
 			return redirect('/dashboard')
 		else:
 			df = pd.read_csv(f, encoding='latin1')
+			# print(df.dtypes.
+			col_info = []
+			for x,y in zip(df.columns, df.dtypes.values):
+				# print(x+'---'+str(y))
+				col_info.append({'key':x,
+					'value':str(y)})
 			col = db[filename]
 			col.insert_many(df.to_dict('records'))
 
 			docs = len(list(col.find()))
 			datasets.insert_one({
-				'filename': filename
+				'filename': filename,
+				'col_info':col_info
 				})
 
 			flash('Uploaded successfully with {} documents'.format(docs))
+			session['filename'] = filename
 			return redirect('/dashboard')
 
 	return render_template('upload_load.html', title='Dashboard', heading='CyAnalytics', form=form, logged_in=True)
 
 
+@app.route('/dataset/dashboard', methods=['GET','POST'])
+def dataset_dashboard():
 
 
+
+	# map_func = Code("function () {"
+	# 				"for (var key in this) {emit(key, null);}"
+	# 				"}"
+	# 				)
+	# reduce_func = Code("function (key, stuff) {return null; }")
+
+	# result = db.iri.map_reduce(map_func, reduce_func, "myresults")
+
+	# ans = result.find().distinct("_id")
+	# ans =list(ans)
+
+	ans = list(datasets.find({
+		'filename':session['filename']
+		}))[0]
+
+	print(ans['col_info'])
+
+	selectform = SelectForm()
+
+	return render_template('dataset_dashboard.html', cols = ans['col_info'], select=selectform)
 
 
 if __name__=='__main__':

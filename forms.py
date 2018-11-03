@@ -17,3 +17,6 @@ class UploadForm(FlaskForm):
 
 class LoadForm(FlaskForm):
 	pass
+
+class SelectForm(FlaskForm):
+	submit = SubmitField('Select Data?')
