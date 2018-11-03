@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash,redirect, session
 from config import Config
 
-from forms import LoginForm, UploadForm, SelectForm, ChartButtonForm
+from forms import LoginForm, UploadForm, SelectForm, ChartButtonForm, LoadForm
 
 from pymongo import MongoClient
 import pandas as pd
@@ -63,6 +63,7 @@ def login():
 @app.route('/dashboard', methods=['GET','POST'])
 def dashboard():
 	form = UploadForm()
+	form2 = LoadForm()
 
 	if form.validate_on_submit():
 		f = request.files['csv']
@@ -71,6 +72,8 @@ def dashboard():
 		file = datasets.find({
 			'filename':filename
 		})
+
+		print(list(file))
 
 		if list(file):
 			flash('FileName already present, choose another name.')
@@ -96,7 +99,7 @@ def dashboard():
 			session['filename'] = filename
 			return redirect('/dataset/dashboard')
 
-	return render_template('upload_load.html', title='Dashboard', heading='CyAnalytics', form=form, logged_in=True)
+	return render_template('upload_load.html', title='Dashboard', heading='CyAnalytics', form=form, logged_in=True, form2=form2)
 
 
 @app.route('/dataset/dashboard', methods=['GET','POST'])
@@ -143,7 +146,7 @@ def dataset_dashboard():
 
 	if chartButtonForm.validate_on_submit():
 		return render_template('chart_query.html')
-	return render_template('dataset-analyzer.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm)
+	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm)
 
 
 if __name__=='__main__':

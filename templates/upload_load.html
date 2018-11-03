@@ -5,7 +5,7 @@
     <div class="container">
         <div class="form card">
             <h1>Upload CSV</h1>
-            <form action="" method="post" novalidate>
+            <form action="" enctype="multipart/form-data" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <p>
                     {{ form.csv.label }}<br>
@@ -27,7 +27,7 @@
         <div class="load card">
             <h1>Load Dataset</h1>
             <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
+                {{ form2.hidden_tag() }}
             </form>
         </div>
     </div>
