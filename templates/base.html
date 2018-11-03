@@ -1,0 +1,36 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>LNMHacks 3.0</title>
+        {% endif %}
+    </head>
+    <body>
+    	<h1>{{heading}}</h1>
+        <div>
+            Navigation:
+            
+
+            
+            {% if logged_in %}
+            <a href="/index">Logout</a>
+            <a href="/dashboard">Dashboard</a>
+            {% else %}
+            <a href="/index">Home</a>
+            <a href="/login">Login</a>
+            {% endif %}
+        </div>
+        <hr>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </body>
+</html>
