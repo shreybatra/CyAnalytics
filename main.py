@@ -4,10 +4,12 @@ from config import Config
 from forms import LoginForm, UploadForm
 
 from pymongo import MongoClient
+import pandas as pd
 
 client = MongoClient()
 db = client.cyanalytics
 users = db.users
+datasets = db.datasets
 
 
 app = Flask(__name__)
@@ -61,7 +63,28 @@ def dashboard():
 	form = UploadForm()
 
 	if form.validate_on_submit():
-		pass
+		f = request.files['csv']
+		filename = form.filename.data
+
+		file = datasets.find({
+			'filename':filename
+		})
+
+		if list(file):
+			flash('FileName already present, choose another name.')
+			return redirect('/dashboard')
+		else:
+			df = pd.read_csv(f, encoding='latin1')
+			col = db[filename]
+			col.insert_many(df.to_dict('records'))
+
+			docs = len(list(col.find()))
+			datasets.insert_one({
+				'filename': filename
+				})
+
+			flash('Uploaded successfully with {} documents'.format(docs))
+			return redirect('/dashboard')
 
 	return render_template('upload_load.html', title='Dashboard', heading='CyAnalytics', form=form, logged_in=True)
 
