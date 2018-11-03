@@ -5,15 +5,15 @@
         {% else %}
         <title>LNMHacks 3.0</title>
         {% endif %}
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/upload_load.css') }}">
     </head>
     <body>
     	<h1>{{heading}}</h1>
         <div>
-            Navigation:
-            
+                     
 
-            
+            <a href="/about">About</a>
             {% if logged_in %}
             <a href="/index">Logout</a>
             <a href="/dashboard">Dashboard</a>
