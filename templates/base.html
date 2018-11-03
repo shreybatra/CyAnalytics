@@ -5,13 +5,13 @@
         {% else %}
         <title>LNMHacks 3.0</title>
         {% endif %}
-        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/upload_load.css') }}">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base.css') }}">
     </head>
     <body>
     	<h1 align='center'>{{heading}}</h1>
         <div>
-            Navigation:
-            
+            <a href="/about">About</a>
             {% if logged_in %}
             <a href="/index">Logout</a>
             <a href="/dashboard">Dashboard</a>
@@ -32,5 +32,6 @@
         {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
+        {% block dataAnalyser %}{% endblock %}
     </body>
 </html>
