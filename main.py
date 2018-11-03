@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash,redirect, session
 from config import Config
 
-from forms import LoginForm, UploadForm, SelectForm
+from forms import LoginForm, UploadForm, SelectForm, ChartButtonForm
 
 from pymongo import MongoClient
 import pandas as pd
@@ -138,8 +138,14 @@ def dataset_dashboard():
 
 	# print(list(result))
 	selectform = SelectForm()
+	chartButtonForm = ChartButtonForm()
 
-	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform)
+	if selectform.validate_on_submit():
+		return render_template('select_query.html')
+
+	if chartButtonForm.validate_on_submit():
+		return render_template('chart_query.html')
+	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm)
 
 
 if __name__=='__main__':

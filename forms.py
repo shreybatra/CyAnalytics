@@ -20,3 +20,6 @@ class LoadForm(FlaskForm):
 
 class SelectForm(FlaskForm):
 	submit = SubmitField('Select Data?')
+
+class ChartButtonForm(FlaskForm):
+	submit = SubmitField('Analyse?')
