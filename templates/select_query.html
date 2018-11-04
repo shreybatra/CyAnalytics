@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="text-center">
 <h1>Enter a single query param at once.</h1>
 <form action="" method="post" novalidate>
     {{ form.hidden_tag() }}
@@ -74,4 +75,5 @@
     {{ form2.hidden_tag() }}
     <p>{{ form2.submit() }}</p>
 </form>
+</div>
 {% endblock %}
