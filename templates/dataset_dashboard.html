@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+    <form action="" method="post" novalidate>
+        {{ select.hidden_tag() }}
+        <p>{{ select.submit() }}</p>
+    </form>
+
+    <form action="" method="post" novalidate>
+        {{ chart.hidden_tag() }}
+        <p>{{ chart.submit() }}</p>
+    </form>
+
     
     <div>
         <ul>
@@ -19,14 +30,5 @@
         </ul>
     </div>
 
-    <form action="" method="post" novalidate>
-        {{ select.hidden_tag() }}
-        <p>{{ select.submit() }}</p>
-    </form>
-
-    <form action="" method="post" novalidate>
-        {{ chart.hidden_tag() }}
-        <p>{{ chart.submit() }}</p>
-    </form>
 
 {% endblock %}

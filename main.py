@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, flash,redirect, session
 from config import Config
+import re
 
-from forms import LoginForm, UploadForm, SelectForm, ChartButtonForm, LoadForm,Bar, Pie, Line, ChartForm
+from forms import LoginForm, UploadForm, SelectForm, ChartButtonForm, LoadForm,Bar, Pie, Line, ChartForm, SelectQueryForm, GoNext
 
 from pymongo import MongoClient
 import pandas as pd
@@ -143,11 +144,88 @@ def dataset_dashboard():
 	chartButtonForm = ChartButtonForm()
 
 	if selectform.validate_on_submit():
-		return redirect('/charts')
+		return redirect('/select/query')
 
 	if chartButtonForm.validate_on_submit():
 		return redirect('/charts')
 	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm, logged_in=True)
+
+@app.route('/select/query', methods=['GET','POST'])
+def select_query():
+
+	form = SelectQueryForm()
+	form2 = GoNext()
+
+	dataset = datasets.find({
+		'filename':session['filename']
+	})
+
+
+	cols = list(dataset)[0]['col_info']
+
+	print(cols)
+	n_cols = []
+	s_cols = []
+
+	for col in cols:
+		if col['value'] != "object":
+			n_cols.append(col['key'])
+		else:
+			s_cols.append(col['key'])
+
+
+	if form.validate_on_submit():
+		print(session['query'])
+		data = dict(request.form)
+
+		column = data.get('column')[0]
+		single_int = data.get('single_int')
+		range_int = data.get('range_int')
+		text_match = data.get('text_match')
+		regex =  data.get('regex')
+		null = data.get('null')
+		geo_point = data.get('geo_point')
+		lat = data.get('lat')
+		lng = data.get('lng')
+
+		print(null)
+
+		if single_int[0]:
+			session['query'][column] = int(single_int[0])
+
+		if range_int[0]:
+			x = range_int[0].split('-')
+			print(range_int[0])
+			y = int(x[1])
+			x = int(x[0])
+			session['query'][column] = {
+				'$gte':x,
+				'$lte':y
+			}
+
+		if text_match[0]:
+			if regex[0]:
+				r = re.compile(text_match[0])
+				session['query'][column] = r
+			else:
+				session['query'][column] = text_match[0]
+
+		if null:
+			session['query'][column] = np.nan
+
+
+		print(session['query'])
+		flash('Output data - \n {}'.format(
+				list(db[session['filename']].find(session['query']))
+			))
+		return render_template('select_query.html', heading='CyAnalytics', form=form, form2=form2, n_cols=n_cols, s_cols=s_cols, logged_in=True)
+
+	elif form2.validate_on_submit():
+		return render_template('select_query.html', heading='CyAnalytics', form=form, form2=form2, n_cols=n_cols, s_cols=s_cols, logged_in=True)
+	
+	return render_template('select_query.html', heading='CyAnalytics', form=form, form2=form2, n_cols=n_cols, s_cols=s_cols, logged_in=True, title='Cy')	
+
+	
 
 
 @app.route('/charts', methods=['GET','POST'])
