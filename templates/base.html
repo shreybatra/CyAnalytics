@@ -7,11 +7,12 @@
         {% endif %}
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/base.css') }}">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
     </head>
     <body>
     	<h1 align='center'>{{heading}}</h1>
         <div>
-            <a href="/about">About</a>
+            <!-- <a href="/about">About</a> -->
             {% if logged_in %}
             <a href="/index">Logout</a>
             <a href="/dashboard">Dashboard</a>
