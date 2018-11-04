@@ -21,6 +21,22 @@ class LoadForm(FlaskForm):
 class SelectForm(FlaskForm):
 	submit = SubmitField('Select Data?')
 
+class SelectQueryForm(FlaskForm):
+	column = StringField('Column Name - ', validators=[DataRequired()])
+	single_int = StringField('Integer Match value?')
+	range_int= StringField('Integer Range? Int - Int format')
+	text_match = StringField('String to match')
+	regex = BooleanField('Regex exp above ([a-z])')
+	null = BooleanField('Want to check null values?')
+	geo_point = BooleanField('Geo Cordinate check?')
+	lat = StringField('Latitude')
+	lng =StringField('Longitude')
+	submit = SubmitField('Add Another filter?')
+
+class GoNext(FlaskForm):
+	submit = SubmitField('Run Query?')
+
+
 class ChartButtonForm(FlaskForm):
 	submit = SubmitField('Analyse?')
 
