@@ -41,25 +41,27 @@
             </ul>
           </div>
         </nav>
-        <div>
+        <br>
+        <div class="row">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <ul class="flashMessages">
+            <ul class="mx-auto d-flex text-center flashMessages">
                 {% for message in messages %}
-                <li>{{ message }}</li>
+                <li class="alert alert-danger">{{ message }}</li>
                 {% endfor %}
             </ul>
-            <br>
-            {% if logged_in %}
+            {% endif %}
+            {% endwith %}
+            <!-- {% if logged_in %}
             <a href="/index">Logout</a>
             <a href="/dashboard">Dashboard</a>
             <a href="/dataset/dashboard">Info</a>
             {% else %}
             <a href="/index">Home</a>
             <a href="/login">Login</a>
-            {% endif %}
-            {% endwith %}
-            {% block content %}{% endblock %}
+            {% endif %} -->
+            <br>
         </div>
+            {% block content %}{% endblock %}
     </body>
 </html>
