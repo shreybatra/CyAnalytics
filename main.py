@@ -148,7 +148,7 @@ def dataset_dashboard():
 
 	if chartButtonForm.validate_on_submit():
 		return redirect('/charts')
-	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm, logged_in=True)
+	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm, logged_in=True, heading='CyAnalytics')
 
 @app.route('/select/query', methods=['GET','POST'])
 def select_query():
@@ -395,7 +395,7 @@ def showcharts():
 
 	
 
-	return render_template('showchart.html', chart=session['filename'], form=chartForm, n_cols=n_cols, s_cols=s_cols, logged_in=True)
+	return render_template('showchart.html', heading='CyAnalytics', chart=session['filename'], form=chartForm, n_cols=n_cols, s_cols=s_cols, logged_in=True)
 
 
 

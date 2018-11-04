@@ -1,8 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
+    
+
+    
     <div class="text-center"> 
-            <h2>Missing Values: </h2>
+    <form action="" method="post" novalidate>
+        {{ select.hidden_tag() }}
+        <p>{{ select.submit() }}</p>
+    </form>
+
+    <form action="" method="post" novalidate>
+        {{ chart.hidden_tag() }}
+        <p>{{ chart.submit() }}</p>
+    </form>
+
+            <h2>Column Meta Information </h2>
     <div>
         <ul>
             {% for item in cols%}
@@ -19,15 +32,5 @@
             {% endfor %}
         </ul>
     </div>
-
-    <form action="" method="post" novalidate>
-        {{ select.hidden_tag() }}
-        <p>{{ select.submit() }}</p>
-    </form>
-
-    <form action="" method="post" novalidate>
-        {{ chart.hidden_tag() }}
-        <p>{{ chart.submit() }}</p>
-    </form>
 </div>
 {% endblock %}
