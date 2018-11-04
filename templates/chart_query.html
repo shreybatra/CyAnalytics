@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+    <form action="" method="post" novalidate>
+        {{ bar.hidden_tag() }}
+        <p>{{ bar.submit() }}</p>
+    </form>
+
+    <form action="" method="post" novalidate>
+        {{ line.hidden_tag() }}
+        <p>{{ line.submit() }}</p>
+    </form>
+
+    <form action="" method="post" novalidate>
+        {{ pie.hidden_tag() }}
+        <p>{{ pie.submit() }}</p>
+    </form>
+    
+
+{% endblock %}

@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, flash,redirect, session
 from config import Config
 
-from forms import LoginForm, UploadForm, SelectForm, ChartButtonForm, LoadForm
+from forms import LoginForm, UploadForm, SelectForm, ChartButtonForm, LoadForm,Bar, Pie, Line, ChartForm
 
 from pymongo import MongoClient
 import pandas as pd
+import numpy as np
 
 from bson.code import Code
 
@@ -73,7 +74,7 @@ def dashboard():
 			'filename':filename
 		})
 
-		print(list(file))
+		# q = list(file))
 
 		if list(file):
 			flash('FileName already present, choose another name.')
@@ -122,12 +123,12 @@ def dataset_dashboard():
 		'filename':session['filename']
 		}))[0]
 
-	print(ans['col_info'])
+	# print(ans['col_info'])
 
 	query_obj = []# [{item['key']: None} for item in ans['col_info']]
 
 	for item in ans['col_info']:
-		count = len(list(db.session['filename'].find({item['key']: None})))
+		count = len(list(db[session['filename']].find({item['key']:np.nan})))
 		obj ={}
 		obj['key'] = item['key']
 		obj['count'] = count
@@ -142,11 +143,182 @@ def dataset_dashboard():
 	chartButtonForm = ChartButtonForm()
 
 	if selectform.validate_on_submit():
-		return render_template('select_query.html')
+		return redirect('/charts')
 
 	if chartButtonForm.validate_on_submit():
-		return render_template('chart_query.html')
-	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm)
+		return redirect('/charts')
+	return render_template('dataset_dashboard.html', cols = ans['col_info'], missing=query_obj, select=selectform, chart=chartButtonForm, logged_in=True)
+
+
+@app.route('/charts', methods=['GET','POST'])
+def charts():
+
+	bar = Bar()
+	line = Line()
+	pie =Pie()
+
+	return redirect('/showchart')
+
+	if pie.validate_on_submit():
+		session['chart'] = 'pie'
+		return redirect('/showchart')
+
+
+	return render_template('chart_query.html', bar=bar, line=line, pie=pie, logged_in=True)
+
+
+@app.route('/showchart', methods=['GET', 'POST'])
+def showcharts():
+
+	chartForm = ChartForm()
+
+	dataset = datasets.find({
+		'filename':session['filename']
+	})
+
+
+	cols = list(dataset)[0]['col_info']
+
+	print(cols)
+	n_cols = []
+	s_cols = []
+
+	for col in cols:
+		if col['value'] != "object":
+			n_cols.append(col['key'])
+		else:
+			s_cols.append(col['key'])
+
+
+
+	if chartForm.validate_on_submit():
+		data = dict(request.form)
+
+		bar = data.get('chart_type_bar')
+		line = data.get('chart_type_line')
+		pie = data.get('chart_type_pie')
+
+		x = data.get('x')
+		y = data.get('y')
+
+
+		if pie:
+			x = x[0]
+			if x in n_cols:
+				print(x)
+				query_obj = {
+					x:{
+						'$ne':None
+					}
+				}
+				q = db[session['filename']].find(query_obj)
+
+				q = list(q)
+				print(q)
+				data_x = [item[x] for item in q]
+				labels_x = data_x
+
+			else:
+				query_obj = {
+					'$group':{
+						'_id': '$'+x,
+						'count': {
+							'$sum': 1
+						}
+					}
+				}
+				q = db[session['filename']].aggregate([query_obj])
+
+				q =list(q)
+
+				labels_x = [item['_id'] for item in q]
+				data_x = [item['count'] for item in q]
+
+			return render_template('final_chart.html', data_x=data_x, labels_x=labels_x, chart_type='pie', logged_in=True)
+
+		if line:
+			x = x[0]
+			y = y[0]
+
+			if x in s_cols and y in n_cols:
+				pass
+			else:
+				x,y = y,x
+
+			query_obj = {
+				'$group':{
+					'_id': '$'+x,
+					'data':{
+						'$addToSet': '$'+y
+					}
+				}
+			}
+
+
+			q = list(db[session['filename']].aggregate([query_obj]))
+
+
+			return render_template('final_chart.html', data=enumerate(q), chart_type='line', logged_in=True)
+
+
+
+
+		# if x:
+		# 	x = x[0]
+		# 	print(session['filename'])
+
+		# 	if group_by_x:
+		# 		a = db[session['filename']].aggregate([
+		# 			{
+		# 				'$group':{
+		# 					'_id':'$'+x,
+		# 					'count':{'$sum':1}
+		# 				}
+		# 			}
+		# 		])
+		# 		q= list(a)
+		# 		labels_x = [item['_id'] for item in q]
+		# 		data_x = [item['count'] for item in q]
+		# 		# print(dbsession['filename'])
+		# 		# print(list(db.users.find())
+		# 		# b = db[session['filename']].find()
+		# 		# print(list(a))
+		# 		print(labels_x)
+		# 	else:
+		# 		a = db[session['filename']].find()
+		# 		data_x = [item[x] for item in list(a)]
+		
+		# if y:
+		# 	y = y[0]
+		# 	print(session['filename'])
+
+		# 	if group_by_y:
+		# 		a = db[session['filename']].aggregate([
+		# 			{
+		# 				'$group':{
+		# 					'_id':'$'+y,
+		# 					'count':{'$sum':1}
+		# 				}
+		# 			}
+		# 		])
+		# 		data_y = [item['count'] for item in list(a)]
+		# 		# print(dbsession['filename'])
+		# 		# print(list(db.users.find())
+		# 		# b = db[session['filename']].find()
+		# 		# print(list(a))
+		# 	else:
+		# 		a = db[session['filename']].find()
+		# 		data_y = [item[y] for item in list(a)]
+
+
+
+
+		return render_template('final_chart.html', data_x=data_x, labels_x=labels_x, chart_type=session['chart'], logged_in=True)
+
+	
+
+	return render_template('showchart.html', chart=session['filename'], form=chartForm, n_cols=n_cols, s_cols=s_cols, logged_in=True)
+
 
 
 if __name__=='__main__':

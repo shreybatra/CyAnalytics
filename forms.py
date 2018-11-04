@@ -23,3 +23,20 @@ class SelectForm(FlaskForm):
 
 class ChartButtonForm(FlaskForm):
 	submit = SubmitField('Analyse?')
+
+class Bar(FlaskForm):
+	submit = SubmitField('Bar Chart?')
+
+class Line(FlaskForm):
+	submit = SubmitField('Line Chart?')
+
+class Pie(FlaskForm):
+	submit = SubmitField('Pie Chart?')
+
+class ChartForm(FlaskForm):
+	chart_type_bar = BooleanField('Bar?')
+	chart_type_line = BooleanField('Line?')
+	chart_type_pie = BooleanField('Pie?')
+	x = StringField('X column', validators=[DataRequired()])
+	y = StringField('Y column')
+	submit = SubmitField('Build Chart')
